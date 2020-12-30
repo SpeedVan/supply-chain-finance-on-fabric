@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderer0
+  namespace: orderer-supply-com
+spec:
+  selector:
+    matchLabels:
+      app: orderer0
+  template:
+    metadata:
+      labels:
+        app: orderer0
+    spec:
+      containers:
+      - name: orderer-container
+        image: hyperledger/fabric-orderer:amd64-2.2.0
+        env:
+          - name: FABRIC_LOGGING_SPEC
+            value: DEBUG
+          - name: ORDERER_OPERATIONS_LISTENADDRESS
+            value: 0.0.0.0:8443
+          - name: ORDERER_GENERAL_LISTENADDRESS
+            value: 0.0.0.0
+          - name: ORDERER_GENERAL_LISTENPORT
+            value: "7050"
+          - name: ORDERER_GENERAL_GENESISMETHOD
+            value: file
+          - name: ORDERER_GENERAL_GENESISFILE
+            value: "/var/hyperledger/orderer/genesis-block/genesis.block"
+          - name: ORDERER_GENERAL_ORDERERTYPE
+            value: etcdraft
+          - name: ORDERER_GENERAL_LOCALMSPID
+            value: "OrdererMSP"
+          - name: ORDERER_GENERAL_LOCALMSPDIR
+            value: "/var/hyperledger/orderer/msp"
+          # enabled TLS
+          - name: ORDERER_GENERAL_TLS_ENABLED
+            value: "true"
+          - name: ORDERER_GENERAL_TLS_CERTIFICATE
+            value: /var/hyperledger/orderer/tls/server.crt
+          - name: ORDERER_GENERAL_TLS_PRIVATEKEY
+            value: /var/hyperledger/orderer/tls/server.key
+          - name: ORDERER_GENERAL_TLS_ROOTCAS
+            value: "[/var/hyperledger/orderer/tls/ca.crt]"
+          - name: ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE
+            value: /var/hyperledger/orderer/tls/server.crt
+          - name: ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY
+            value: /var/hyperledger/orderer/tls/server.key
+          - name: ORDERER_GENERAL_CLUSTER_ROOTCAS
+            value: "[/var/hyperledger/orderer/tls/ca.crt]"
+        workingDir: /opt/gopath/src/github.com/hyperledger/fabric
+        # command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+        command: ["orderer"]
+        volumeMounts:
+          - name: timezone
+            mountPath: /etc/localtime
+          - name: log
+            mountPath: /var/log
+          - name: fabric-pvc
+            mountPath: /var/hyperledger/production
+            subPath: gyl/gyl_orderer/data/orderer0
+          - name: fabric-pvc
+            mountPath: /var/hyperledger/orderer/genesis-block
+            subPath: gyl/gyl_orderer/genesis_block
+          - name: fabric-pvc
+            mountPath: /var/hyperledger/orderer/msp
+            subPath: gyl/gyl_orderer/cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/msp
+          - name: fabric-pvc
+            mountPath: /var/hyperledger/orderer/tls
+            subPath: gyl/gyl_orderer/cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/tls
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+            type: ""
+        - name: log
+          hostPath:
+            path: /var/log
+            type: ""
+        - name: fabric-pvc
+          persistentVolumeClaim:
+            claimName: fabric-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: orderer0
+  name: orderer0
+  namespace: orderer-supply-com
+spec:
+  type: ClusterIP
+  ports:
+    - name: "orderer"
+      port: 7050
+      targetPort: 7050
+  selector:
+    app: orderer0

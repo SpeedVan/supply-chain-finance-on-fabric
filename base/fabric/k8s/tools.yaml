@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tools
+  name: tools
+  namespace: orderer-supply-com
+spec:
+  selector:
+    matchLabels:
+      app: tools
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: tools
+    spec:
+      containers:
+        - command: ["sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+          image: hyperledger/fabric-tools:amd64-2.2.0
+          name: tools
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log
+            - name: sharedvolume
+              mountPath: /var/hyperledger
+              subPath: gyl
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          workingDir: /var/hyperledger
+      restartPolicy: Always
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log
+        - name: sharedvolume
+          persistentVolumeClaim:
+            claimName: fabric-pvc

@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peer0
+  namespace: f1-supply-com
+spec:
+  selector:
+    matchLabels:
+      app: peer0
+  template:
+    metadata:
+      labels:
+        app: peer0
+    spec:
+      containers:
+      - name: peer0
+        image: hyperledger/fabric-peer:amd64-2.2.0
+        env:
+          - name: CORE_VM_ENDPOINT
+            value: "unix:///host/var/run/docker.sock"
+          - name: FABRIC_LOGGING_SPEC
+            value: "DEBUG"
+          - name: CORE_PEER_TLS_ENABLED
+            value: "true"
+          - name: CORE_PEER_GOSSIP_USELEADERELECTION
+            value: "true"
+          - name: CORE_PEER_GOSSIP_ORGLEADER
+            value: "false" 
+          - name: CORE_PEER_PROFILE_ENABLED
+            value: "true"
+          - name: CORE_PEER_TLS_CERT_FILE
+            value: "/etc/hyperledger/fabric/tls/server.crt"
+          - name: CORE_PEER_TLS_KEY_FILE
+            value: "/etc/hyperledger/fabric/tls/server.key"
+          - name: CORE_PEER_TLS_ROOTCERT_FILE
+            value: "/etc/hyperledger/fabric/tls/ca.crt"
+          - name: CORE_PEER_TLS_SERVERHOSTOVERRIDE
+            value: peer0.f1.supply.com
+          - name: CORE_PEER_ID
+            value: peer0.f1.supply.com
+          - name: CORE_PEER_ADDRESS
+            value: peer0.f1.supply.com:7051
+          - name: CORE_PEER_GOSSIP_EXTERNALENDPOINT
+            value: peer0.f1.supply.com:7051
+          - name: CORE_PEER_LOCALMSPID
+            value: "GylFOrg1MSP"
+          - name: CORE_PEER_ADDRESSAUTODETECT
+            value: "true"
+        workingDir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+        command:
+          - peer
+          - node
+          - start
+        volumeMounts:
+          - name: timezone
+            mountPath: /etc/localtime
+          - name: log
+            mountPath: /var/log
+          - name: run
+            mountPath: /host/var/run/
+          - name: fabric-pvc
+            mountPath: /var/hyperledger/production
+            subPath: gyl/gyl_f_org1/data/peer0
+          - name: fabric-pvc
+            mountPath: /etc/hyperledger/fabric/msp
+            subPath: gyl/gyl_f_org1/cert/peerOrganizations/f1.supply.com/peers/peer0.f1.supply.com/msp
+          - name: fabric-pvc
+            mountPath: /etc/hyperledger/fabric/tls
+            subPath: gyl/gyl_f_org1/cert/peerOrganizations/f1.supply.com/peers/peer0.f1.supply.com/tls
+          - name: fabric-pvc
+            mountPath: /etc/hyperledger/fabric/orderer_cert
+            subPath: gyl/gyl_f_org1/cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/tls
+          # - name: fabric-pvc
+          #   mountPath: /etc/hyperledger/fabric/channel_block
+          #   subPath: gyl/gly_f_org1/channel_block
+        resources:
+          limits:
+            memory: "500Mi"
+            cpu: "100m"
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+            type: ""
+        - name: log
+          hostPath:
+            path: /var/log
+            type: ""
+        - name: run
+          hostPath:
+            path: /var/run
+        - name: fabric-pvc
+          persistentVolumeClaim:
+            claimName: fabric-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+   namespace: f1-supply-com
+   name: peer0
+spec:
+ selector:
+   app: peer0
+ type: ClusterIP
+ ports:
+   - name: listen-endpoint
+     protocol: TCP
+     port: 7051
+
+   - name: chaincode-listen
+     protocol: TCP
+     port: 7052
+
+   - name: event-listen
+     protocol: TCP
+     port: 7053
