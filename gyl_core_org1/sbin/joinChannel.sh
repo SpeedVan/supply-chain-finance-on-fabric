@@ -4,7 +4,7 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE-$0}")"; pwd)
 CHANNEL_NAME=$1
 
 FABRIC_LOGGING_SPEC="DEBUG" \
-FABRIC_CFG_PATH=${CUR_DIR}/../../base/fabric/config \
+FABRIC_CFG_PATH=${CUR_DIR}/../config \
 CORE_PEER_ID="GylCoreOrg1MSP" \
 CORE_PEER_LOCALMSPID="GylCoreOrg1MSP" \
 CORE_PEER_TLS_ENABLED="true" \

@@ -19,7 +19,7 @@ export CORE_PEER_LOCALMSPID="OrdererMSP"
 export CORE_PEER_TLS_ROOTCERT_FILE=${CUR_DIR}/../cert/ordererOrganizations/supply.com/msp/tlscacerts/tlsca.supply.com-cert.pem
 export CORE_PEER_MSPCONFIGPATH=${CUR_DIR}/../cert/ordererOrganizations/supply.com/users/Admin@supply.com/msp
 
-export FABRIC_CFG_PATH=${CUR_DIR}/../../base/fabric/config
+export FABRIC_CFG_PATH=${CUR_DIR}/../config
 
 peer channel fetch config ${CUR_DIR}/../config/sys_config_block.pb -o orderer0.supply.com:7050 -c ${CHANNEL_NAME} --tls --cafile ${ORDERER_CA}
 
@@ -29,7 +29,7 @@ configtxlator proto_decode --input ${CUR_DIR}/../config/sys_config_block.pb  --t
 # jq .data.data[0].payload.data.config ${CUR_DIR}/../config/sys_config_block.json > ${CUR_DIR}/../config/sys_config.json
 
 # sth.json + sys_config.json -> sys_config_modified.json
-jq -s '.[0] * {"channel_group":{"groups":{"Consortiums":{"groups": {"example": {"groups": {"'${ORG_MSPID}'":.[1]}}}}}}}' ${CUR_DIR}/../config/sys_config.json ${CUR_DIR}/../../${ORG_FOLDER_NAME}/config/configtx_org.json > ${CUR_DIR}/../config/sys_config_modified.json
+jq -s '.[0] * {"channel_group":{"groups":{"Consortiums":{"groups": {"SupplyConsortium": {"groups": {"'${ORG_MSPID}'":.[1]}}}}}}}' ${CUR_DIR}/../config/sys_config.json ${CUR_DIR}/../apply/${ORG_FOLDER_NAME}/configtx_org.json > ${CUR_DIR}/../config/sys_config_modified.json
 
 # sys_config.json -> sys_config.pb
 # sys_config_modified.json -> sys_config_modified.pb
@@ -47,3 +47,10 @@ configtxlator proto_encode --input ${CUR_DIR}/../config/sys_update_in_envelope.j
 
 # update orderer config
 peer channel update -f ${CUR_DIR}/../config/sys_update_in_envelope.pb -c ${CHANNEL_NAME} -o orderer0.supply.com:7050 --tls true --cafile ${ORDERER_CA}
+
+
+
+
+# sim give tls cert
+mkdir -p ${CUR_DIR}/../../${ORG_FOLDER_NAME}/cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/msp/tlscacerts
+cp ${CUR_DIR}/../cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/msp/tlscacerts/tlsca.supply.com-cert.pem ${CUR_DIR}/../../${ORG_FOLDER_NAME}/cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/msp/tlscacerts/

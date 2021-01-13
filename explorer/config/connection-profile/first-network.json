@@ -1,0 +1,57 @@
+{
+	"name": "first-network",
+	"version": "1.0.0",
+	"client": {
+		"tlsEnable": true,
+		"adminCredential": {
+			"id": "exploreradmin",
+			"password": "exploreradminpw"
+		},
+		"enableAuthentication": true,
+		"organization": "GylCoreOrg1MSP",
+		"connection": {
+			"timeout": {
+				"peer": {
+					"endorser": "300"
+				},
+				"orderer": "300"
+			}
+		}
+	},
+	"channels": {
+		"channel1": {
+			"peers": {
+        "peer0.core.supply.com": {}
+			},
+			"connection": {
+				"timeout": {
+					"peer": {
+						"endorser": "6000",
+						"eventHub": "6000",
+						"eventReg": "6000"
+					}
+				}
+			}
+		}
+	},
+	"organizations": {
+		"GylCoreOrg1MSP": {
+			"mspid": "GylCoreOrg1MSP",
+			"adminPrivateKey": {
+				"path": "/fabric/gyl/gyl_core_org1/cert/peerOrganizations/core.supply.com/users/Admin@core.supply.com/msp/keystore/priv_sk"
+			},
+			"peers": ["peer0.core.supply.com"],
+			"signedCert": {
+				"path": "/fabric/gyl/gyl_core_org1/cert/peerOrganizations/core.supply.com/users/Admin@core.supply.com/msp/signcerts/Admin@core.supply.com-cert.pem"
+			}
+		}
+	},
+	"peers": {
+		"peer0.core.supply.com": {
+			"tlsCACerts": {
+				"path": "/fabric/gyl/gyl_core_org1/cert/peerOrganizations/core.supply.com/peers/peer0.core.supply.com/tls/ca.crt"
+			},
+			"url": "grpcs://peer0.core.supply.com:7051"
+		}
+	}
+}

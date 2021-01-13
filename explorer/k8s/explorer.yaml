@@ -1,0 +1,150 @@
+# explorer
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: blockchain-explorer-app
+  namespace: orderer-supply-com
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: explorer-app
+    spec:
+      volumes:
+      - name: fabricfiles
+        persistentVolumeClaim:
+          claimName: fabric-pvc
+      - name: timezone
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
+      - name: log
+        hostPath:
+          path: /var/log
+      containers:
+      - name: explorer
+        image: hyperledger/explorer:1.1.3
+        # command: ["sh" , "-c" , "/fabric/gyl/base/fabric/explorer/run.sh"]
+        env:
+        - name: DATABASE_HOST
+          value: blockchain-explorer-db.orderer-supply-com
+        - name: DATABASE_USERNAME
+          value: hppoc
+        - name: DATABASE_PASSWORD
+          value: password
+        - name: DATABASE_DATABASE
+          value: fabricexplorer
+        - name: LOG_LEVEL_APP
+          value: debug
+        - name: LOG_LEVEL_DB
+          value: debug
+        - name: LOG_LEVEL_CONSOLE
+          value: info
+        - name: LOG_CONSOLE_STDOUT
+          value: "true"
+        - name: DISCOVERY_AS_LOCALHOST
+          value: "false"
+        volumeMounts:
+        - name: fabricfiles
+          mountPath: /opt/explorer/app/platform/fabric/config.json
+          subPath: gyl/explorer/config/config.json
+        - name: fabricfiles
+          mountPath: /opt/explorer/app/platform/fabric/connection-profile
+          subPath: gyl/explorer/config/connection-profile
+        - name: fabricfiles
+          mountPath: /fabric
+---
+# svc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blockchain-explorer-app
+  namespace: orderer-supply-com
+  labels:
+    run: explorer-app
+spec:
+  type: ClusterIP 
+  selector:
+    name: explorer-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080 
+    name: pgsql
+---
+# db
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: blockchain-explorer-db
+  namespace: orderer-supply-com
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: explorer-db
+    spec:
+      volumes:
+      - name: fabricfiles
+        persistentVolumeClaim:
+          claimName: fabric-pvc
+      - name: timezone
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
+      - name: log
+        hostPath:
+          path: /var/log
+      containers:
+      - name: postgres
+        image: hyperledger/explorer-db:1.1.3
+        env:
+        - name: DATABASE_DATABASE
+          value: fabricexplorer
+        - name: DATABASE_USERNAME
+          value: hppoc
+        - name: DATABASE_PASSWORD
+          value: password
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: fabricfiles
+          subPath: gyl/explorer/db/data
+---
+# svc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blockchain-explorer-db
+  namespace: orderer-supply-com
+  labels:
+    run: explorer-db
+spec:
+  type: ClusterIP
+  selector:
+    name: explorer-db
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
+    name: pgsql
+---
+# ing
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: blockchain-explorer-app
+  namespace: orderer-supply-com
+  labels:
+    run: explorer-app
+spec:
+  rules:
+  - host: explorer.supply.test
+    http:
+      paths:
+      - backend:
+          serviceName: blockchain-explorer-app
+          servicePort: 80

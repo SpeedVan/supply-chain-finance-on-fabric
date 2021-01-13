@@ -3,8 +3,9 @@ CUR_DIR=$(cd "$(dirname "${BASH_SOURCE-$0}")"; pwd)
 
 CHANNEL_NAME=$1
 
+mkdir -p ${CUR_DIR}/../channel_artifacts
 FABRIC_LOGGING_SPEC="DEBUG" \
-FABRIC_CFG_PATH=${CUR_DIR}/../../base/fabric/config \
+FABRIC_CFG_PATH=${CUR_DIR}/../config \
 CORE_PEER_ID="GylFOrg1MSP" \
 CORE_PEER_LOCALMSPID="GylFOrg1MSP" \
 CORE_PEER_TLS_ENABLED="true" \
@@ -16,7 +17,7 @@ CORE_PEER_ADDRESS=peer0.f1.supply.com:7051 \
 peer channel fetch 0 ${CUR_DIR}/../channel_artifacts/channel1.block -o orderer0.supply.com:7050 -c channel1 --tls --cafile ${CUR_DIR}/../cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/msp/tlscacerts/tlsca.supply.com-cert.pem
 
 FABRIC_LOGGING_SPEC="DEBUG" \
-FABRIC_CFG_PATH=${CUR_DIR}/../../base/fabric/config \
+FABRIC_CFG_PATH=${CUR_DIR}/../config \
 CORE_PEER_ID="GylFOrg1MSP" \
 CORE_PEER_LOCALMSPID="GylFOrg1MSP" \
 CORE_PEER_TLS_ENABLED="true" \

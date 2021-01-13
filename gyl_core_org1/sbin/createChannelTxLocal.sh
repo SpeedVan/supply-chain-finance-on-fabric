@@ -9,4 +9,4 @@ echo create tx file
 # export CORE_PEER_TLS_ROOTCERT_FILE=${CUR_DIR}/../../gyl_orderer/cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/msp/tlscacerts/tlsca.supply.com-cert.pem
 # export CORE_PEER_MSPCONFIGPATH=${CUR_DIR}/../../gyl_orderer/cert/ordererOrganizations/supply.com/users/Admin@example/msp
 
-FABRIC_CFG_PATH=${CUR_DIR}/../config configtxgen -profile CoreFOrg1Channel -outputCreateChannelTx ${CUR_DIR}/../channel_artifacts/channel1.tx -channelID channel1
+FABRIC_CFG_PATH=${CUR_DIR}/../config configtxgen -profile Channel1 -outputCreateChannelTx ${CUR_DIR}/../channel_artifacts/channel1.tx -channelID channel1

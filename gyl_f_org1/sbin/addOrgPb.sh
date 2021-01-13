@@ -12,7 +12,7 @@ CORE_PEER_LOCALMSPID="GylFOrg1MSP" \
 CORE_PEER_TLS_ROOTCERT_FILE=${CUR_DIR}/../cert/peerOrganizations/f1.supply.com/peers/peer0.f1.supply.com/tls/ca.crt \
 CORE_PEER_MSPCONFIGPATH=${CUR_DIR}/../cert/peerOrganizations/f1.supply.com/users/Admin@f1.supply.com/msp \
 CORE_PEER_ADDRESS=peer0.f1.supply.com:7051 \
-FABRIC_CFG_PATH=${CUR_DIR}/../../base/fabric/config \
+FABRIC_CFG_PATH=${CUR_DIR}/../config \
 peer channel fetch config ${CUR_DIR}/../config/chn_config_block.pb -o orderer0.supply.com:7050 -c ${CHANNEL_NAME} --tls --cafile ${ORDERER_CA}
 
 echo create pb.file
@@ -22,7 +22,7 @@ configtxlator proto_decode --input ${CUR_DIR}/../config/chn_config_block.pb  --t
 # jq .data.data[0].payload.data.config ${CUR_DIR}/../config/chn_config_block.json > ${CUR_DIR}/../config/chn_config.json
 
 # sth.json + chn_config.json -> chn_config_modified.json
-jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {"'${ORG_MSPID}'":.[1]}}}}}' ${CUR_DIR}/../config/chn_config.json ${CUR_DIR}/../../${ORG_FOLDER_NAME}/config/configtx_org.json > ${CUR_DIR}/../config/chn_config_modified.json
+jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {"'${ORG_MSPID}'":.[1]}}}}}' ${CUR_DIR}/../config/chn_config.json ${CUR_DIR}/../apply/${ORG_FOLDER_NAME}/configtx_org.json > ${CUR_DIR}/../config/chn_config_modified.json
 
 # chn_config.json -> chn_config.pb
 # chn_config_modified.json -> chn_config_modified.pb

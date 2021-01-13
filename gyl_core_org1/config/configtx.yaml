@@ -261,8 +261,8 @@ Channel: &ChannelDefaults
 #
 ################################################################################
 Profiles:
-    CoreFOrg1Channel:
-        Consortium: example
+    Channel1:
+        Consortium: SupplyConsortium
         <<: *ChannelDefaults
         Application:
             <<: *ApplicationDefaults

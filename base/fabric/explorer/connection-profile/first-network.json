@@ -1,0 +1,111 @@
+{
+  "name": "first-network",
+  "version": "1.0",
+  "client": {
+		"tlsEnable": true,
+		"adminCredential": {
+			"id": "exploreradmin",
+			"password": "exploreradminpw"
+		},
+		"enableAuthentication": true,
+		"organization": "GylCoreOrg1MSP",
+		"connection": {
+			"timeout": {
+				"peer": {
+					"endorser": "300"
+				},
+				"orderer": "300"
+			}
+		}
+	},
+  "channels": {
+    "channel1": {
+      "peers": {
+        "peer0.core.supply.com": {},
+        "peer0.f1.supply.com": {}
+      },
+      "orderers": {
+        "orderer0.supply.com" : {},
+        "orderer1.supply.com" : {},
+        "orderer2.supply.com" : {}
+      },
+      "connection": {
+        "timeout": {
+          "peer": {
+            "endorser": "6000",
+            "eventHub": "6000",
+            "eventReg": "6000"
+          }
+        }
+      }
+    }
+  },
+  "organizations": {
+    "GylCoreOrg1MSP": {
+      "mspid": "GylCoreOrg1MSP",
+      "fullpath": false,
+      "adminPrivateKey": {
+        "path":
+          "/fabric/gyl/gyl_core_org1/cert/peerOrganizations/core.supply.com/users/Admin@core.supply.com/msp/keystore"
+      },
+      "signedCert": {
+        "path":
+          "/fabric/gyl/gyl_core_org1/cert/peerOrganizations/core.supply.com/users/Admin@core.supply.com/msp/signcerts"
+      }
+    },
+    "GylFOrg1MSP": {
+      "mspid": "GylFOrg1MSP",
+      "fullpath": false,
+      "adminPrivateKey": {
+        "path":
+          "/fabric/gyl/gyl_f_org1/cert/peerOrganizations/f1.supply.com/users/Admin@f1.supply.com/msp/keystore"
+      },
+      "signedCert": {
+        "path":
+          "/fabric/gyl/gyl_f_org1/cert/peerOrganizations/f1.supply.com/users/Admin@f1.supply.com/msp/signcerts"
+      }
+    },
+    "OrdererMSP": {
+      "mspid": "OrdererMSP",
+      "adminPrivateKey": {
+        "path":
+          "/fabric/gyl/gyl_orderer/cert/ordererOrganizations/supply.com/users/Admin@supply.com/msp/keystore"
+      }
+    }
+  },
+  "peers": {
+    "peer0.core.supply.com": {
+      "tlsCACerts": {
+        "path":
+          "/fabric/gyl/gyl_core_org1/cert/peerOrganizations/core.supply.com/peers/peer0.core.supply.com/tls/ca.crt"
+      },
+      "url": "grpc://peer0.core.supply.com:7051",
+      "eventUrl": "grpc://peer0.core.supply.com:7053",
+      "grpcOptions": {
+        "ssl-target-name-override": "peer0.core.supply.com"
+      }
+    },
+    "peer0.f1.supply.com": {
+      "tlsCACerts": {
+        "path":
+          "/fabric/gyl/gyl_f_org1/cert/peerOrganizations/f1.supply.com/peers/peer0.f1.supply.com/tls/ca.crt"
+      },
+      "url": "grpc://peer0.f1.supply.com:7051",
+      "eventUrl": "grpc://peer0.f1.supply.com:7053",
+      "grpcOptions": {
+        "ssl-target-name-override": "peer0.f1.supply.com"
+      }
+    }
+  },
+  "orderers": {
+    "orderer0.supply.com": {
+      "url": "grpc://orderer0.supply.com:7051"
+    },
+    "orderer1.supply.com": {
+      "url": "grpc://orderer1.supply.com:7051"
+    },
+    "orderer2.supply.com": {
+      "url": "grpc://orderer2.supply.com:7051"
+    }
+  }
+}

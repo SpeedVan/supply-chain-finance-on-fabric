@@ -25,7 +25,7 @@ Organizations:
         ID: OrdererMSP
 
         # MSPDir is the filesystem path which contains the MSP configuration
-        MSPDir: ../../../gyl_orderer/cert/ordererOrganizations/supply.com/msp
+        MSPDir: ../cert/ordererOrganizations/supply.com/msp
 
         # Policies defines the set of policies at this level of the config tree
         # For organization policies, their canonical path is usually
@@ -41,39 +41,39 @@ Organizations:
                 Type: Signature
                 Rule: "OR('OrdererMSP.admin')"
 
-    - &Core
-        # DefaultOrg defines the organization which is used in the sampleconfig
-        # of the fabric.git development environment
-        Name: GylCoreOrg1MSP
+    # - &Core
+    #     # DefaultOrg defines the organization which is used in the sampleconfig
+    #     # of the fabric.git development environment
+    #     Name: GylCoreOrg1MSP
 
-        # ID to load the MSP definition as
-        ID: GylCoreOrg1MSP
+    #     # ID to load the MSP definition as
+    #     ID: GylCoreOrg1MSP
 
-        MSPDir: ../../../gyl_core_org1/cert/peerOrganizations/core.supply.com/msp
+    #     MSPDir: ../../../gyl_core_org1/cert/peerOrganizations/core.supply.com/msp
 
-        # Policies defines the set of policies at this level of the config tree
-        # For organization policies, their canonical path is usually
-        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
-        Policies: &Org1Policies
-            Readers:
-                Type: Signature
-                Rule: "OR('GylCoreOrg1MSP.admin', 'GylCoreOrg1MSP.peer', 'GylCoreOrg1MSP.client')"
-            Writers:
-                Type: Signature
-                Rule: "OR('GylCoreOrg1MSP.admin', 'GylCoreOrg1MSP.client')"
-            Admins:
-                Type: Signature
-                Rule: "OR('GylCoreOrg1MSP.admin')"
-            Endorsement:
-                Type: Signature
-                Rule: "OR('GylCoreOrg1MSP.peer')"
+    #     # Policies defines the set of policies at this level of the config tree
+    #     # For organization policies, their canonical path is usually
+    #     #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
+    #     Policies: &Org1Policies
+    #         Readers:
+    #             Type: Signature
+    #             Rule: "OR('GylCoreOrg1MSP.admin', 'GylCoreOrg1MSP.peer', 'GylCoreOrg1MSP.client')"
+    #         Writers:
+    #             Type: Signature
+    #             Rule: "OR('GylCoreOrg1MSP.admin', 'GylCoreOrg1MSP.client')"
+    #         Admins:
+    #             Type: Signature
+    #             Rule: "OR('GylCoreOrg1MSP.admin')"
+    #         Endorsement:
+    #             Type: Signature
+    #             Rule: "OR('GylCoreOrg1MSP.peer')"
 
-        AnchorPeers:
+    #     AnchorPeers:
             # AnchorPeers defines the location of peers which can be used
             # for cross org gossip communication.  Note, this value is only
             # encoded in the genesis block in the Application section context
-            - Host: peer0.core.supply.com
-              Port: 7051
+            # - Host: peer0.core.supply.com
+            #   Port: 7051
             # - Host: peer1-org1
             #   Port: 7051
 
@@ -296,16 +296,16 @@ Orderer: &OrdererDefaults
         Consenters:
             - Host: orderer0.supply.com
               Port: 7050
-              ClientTLSCert: ../../../gyl_orderer/cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/tls/server.crt
-              ServerTLSCert: ../../../gyl_orderer/cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/tls/server.crt
+              ClientTLSCert: ../cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/tls/server.crt
+              ServerTLSCert: ../cert/ordererOrganizations/supply.com/orderers/orderer0.supply.com/tls/server.crt
             - Host: orderer1.supply.com
               Port: 7050
-              ClientTLSCert: ../../../gyl_orderer/cert/ordererOrganizations/supply.com/orderers/orderer1.supply.com/tls/server.crt
-              ServerTLSCert: ../../../gyl_orderer/cert/ordererOrganizations/supply.com/orderers/orderer1.supply.com/tls/server.crt
+              ClientTLSCert: ../cert/ordererOrganizations/supply.com/orderers/orderer1.supply.com/tls/server.crt
+              ServerTLSCert: ../cert/ordererOrganizations/supply.com/orderers/orderer1.supply.com/tls/server.crt
             - Host: orderer2.supply.com
               Port: 7050
-              ClientTLSCert: ../../../gyl_orderer/cert/ordererOrganizations/supply.com/orderers/orderer2.supply.com/tls/server.crt
-              ServerTLSCert: ../../../gyl_orderer/cert/ordererOrganizations/supply.com/orderers/orderer2.supply.com/tls/server.crt
+              ClientTLSCert: ../cert/ordererOrganizations/supply.com/orderers/orderer2.supply.com/tls/server.crt
+              ServerTLSCert: ../cert/ordererOrganizations/supply.com/orderers/orderer2.supply.com/tls/server.crt
 
         # Options to be specified for all the etcd/raft nodes. The values here
         # are the defaults for all new channels and can be modified on a
@@ -407,6 +407,6 @@ Profiles:
             Capabilities:
                 <<: *OrdererCapabilities
         Consortiums:
-            example:
+            SupplyConsortium:
                 Organizations:
-                    - *Core
+                    # - *Core

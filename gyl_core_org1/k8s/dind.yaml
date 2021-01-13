@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dind  #docker的域名，k8s的dns可以将域名docker解析为ip
+  namespace: core-supply-com
+spec:
+  selector:
+    app: dind
+  ports:
+  - protocol: TCP
+    targetPort: 2375
+    port: 2375
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dind
+  namespace: core-supply-com
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dind
+    spec:
+      volumes:
+      - name: dockervolume
+        persistentVolumeClaim:
+          claimName: fabric-pvc
+      containers:
+      - name: docker
+        securityContext:
+          privileged: true
+        image: "docker:stable-dind"
+        env:
+          - name: DOCKER_TLS_CERTDIR
+            value: ""
+        args: ["--registry-mirror=https://6kx4zyno.mirror.aliyuncs.com"]
+        ports:
+        - containerPort: 2375
+        volumeMounts:
+        - mountPath: /var/lib/docker
+          name: dockervolume
+          subPath: gyl/gyl_core_org1/docker

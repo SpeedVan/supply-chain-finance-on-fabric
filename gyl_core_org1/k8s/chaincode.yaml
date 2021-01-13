@@ -1,0 +1,48 @@
+#---------------- Chaincode Service ---------------------
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: channel1-cc1
+  namespace: core-supply-com
+spec:
+  selector:
+    app: channel1-cc1
+  ports:
+  - protocol: TCP
+    targetPort: 7052
+    port: 7052
+---
+#---------------- Chaincode Deployment ---------------------
+apiVersion: apps/v1 # for versions before 1.8.0 use apps/v1beta1
+kind: Deployment
+metadata:
+  name: channel1-cc1
+  namespace: core-supply-com
+  labels:
+    app: channel1-cc1
+spec:
+  selector:
+    matchLabels:
+      app: channel1-cc1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: channel1-cc1
+    spec:
+      containers:
+        - image: harbor.renmaitech.cn/fabric-cc/channel1-cc1-core-supply-com:v0.1
+          name: channel1-cc1
+          imagePullPolicy: Always
+          env:
+            - name: CHAINCODE_CCID
+              value: "channel1-cc1:116e7f822afb18ea3f2c8f99a17e9ef62a80f233f3ed7606927f732a16045782"
+            - name: CHAINCODE_ADDRESS
+              value: "0.0.0.0:7052"
+            - name: CORE_CHAINCODE_ID_NAME
+              value: channel1-cc1
+          command: ["/app/chaincode"]
+          ports:
+            - containerPort: 7052
